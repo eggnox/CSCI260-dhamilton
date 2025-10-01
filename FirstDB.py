@@ -1,11 +1,16 @@
-import os, psycopg2
+import psycopg2
+conn = psycopg2.connect(
+    hostaddr="127.0.0.1",  # hard override
+    host="localhost",
+    port=5432,
+    user="accounting",
+    password="Frostpin!2",
+    dbname="fall2025csci260",
+)
+with conn, conn.cursor() as cur:
+    cur.execute("select 1;")
+    print(cur.fetchone())
 
-connection = psycopg2.connect(user="accounting",
-                                  password="Frostpin!2",
-                                  host="127.0.0.1", port = 5432,
-                                  database="fall2025csci260")
-
-cursor =connection.cursor()
 
 def showLocations():
     
