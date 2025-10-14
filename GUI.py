@@ -1,58 +1,53 @@
-import tkinter as tk
+from DB import *
 
-def button_clicked():
-    global outputArea
-    global txtId
-    """This function is called when the button is pressed."""
-    #print("Button was clicked!")
-    outputArea.delete(1.0,tk.END)
-    outputArea.insert(tk.END,"Button was Clicked\n"+txtId.get(1.0,tk.END))
+def showLocations(data):
+    print("\t id|\t x|\t y|")
+    print("------------------------------------")
+    for row in data:
+        for value in row:
+            print("\t",value,"|",end="")
+        print("")
+    print("------------------------------------")
 
-def showLocations():
-    global outputArea
-    global selected
-    #print("Data would be here")
-    outputArea.delete(1.0,tk.END)
-    outputArea.insert(tk.END,"Data would be here\n"+selected.get())
+def getLocationFromUser():  # C in CRUD 
+    x=input("Please enter X:")
+    y=input("Please enter Y:")
+    return (x,y)
 
-# Create the main window
-root = tk.Tk()
-root.title("Button Example")
-root.geometry("300x600") # Set window size
-root.grid_columnconfigure(0, weight=1, uniform='col')
-root.grid_columnconfigure(1, weight=1, uniform='col')
+def updateLocation():
+    choice=0
+    print("0) Cancel")
+    print("1) Change X")
+    print("2) Change Y")
+    print("3) Change Both")
+    choice=int(input("Enter your choice to change a parameter"))
+    if choice!=0:
+        id=input("Enter id you want to update:")
+        if choice==1 or choice==3:
+            x=input("Enter new X:")
+        if choice==2 or choice==3:
+            y=input("Enter new Y:")
+        if choice==1: 
+            putChange( {"id":id,"x":x} )
+        if choice==2:
+            putChange( {"id":id,"y":y} )
+        if choice==3:
+            putChange( {"id":id,"x":x,"y":y})
 
-# Create a button widget
-# The 'command' argument links the button to the 'button_clicked' function
-button = tk.Button(root, text="Click Me!", command=button_clicked)
-showButton=tk.Button(root, text="Show Locations", command=showLocations )
-outputArea = tk.Text(root, height=10, width=40)
-labelId = tk.Label(root,text="Input Id")
-txtId = tk.Text(root, height=1)
-
-items = ["-","Karl","Was","Here"]
-#var = tk.StringVar()
-#var.set(items)
-label2Id = tk.Label(root,text="Drop Down Demo")
-selected=tk.StringVar(value="-")
-lb=tk.OptionMenu(root,selected , *items)
-
-# Pack the button into the window
-# 'pack()' is a simple geometry manager to place widgets
-#button.pack(pady=2) # Add some vertical padding
-#showButton.pack(pady=2)
-#outputArea.pack(pady=2)
-#labelId.pack(pady=2)
-#txtId.pack(pady=2)
-#label2Id.pack(pady=2)
-#lb.pack(pady=2)
-button.grid(row=0,column=0)
-showButton.grid(row=0,column=1)
-outputArea.grid(row=1,column=0,columnspan=2,sticky="ew")
-labelId.grid(row=2,column=0)
-txtId.grid(row=2,column=1)
-label2Id.grid(row=3,column=0)
-lb.grid(row=3,column=1,stick="ew")
-
-# Start the Tkinter event loop
-root.mainloop()
+choice=1
+while choice!=0:
+    print("0) Quit")
+    print("1) Show Locations R")
+    print("2) Add Location C")
+    print("3) Update Location U")
+    print("4) Delete (to be completed by student)")
+    print("5) Commit current changes")
+    choice=int(input("Enter your choice: "))
+    if choice==1:
+        showLocations(getLocations())
+    if choice==2:
+        putLocation(getLocationFromUser())
+    if choice==3:
+        updateLocation()
+    if choice==5:
+        commitChanges()

@@ -1,0 +1,88 @@
+import tkinter as tk
+from DB import *
+
+def actualAddToDB(values,win):
+    putLocation(values)
+    outputLocations()
+    win.destroy()
+
+def add_clicked():
+    global root
+    addWin=tk.Toplevel(root)
+    addWin.geometry("600x300") # Set window size
+    addWin.grid_columnconfigure(0, weight=1, uniform='col')
+    addWin.grid_columnconfigure(1, weight=1, uniform='col')
+    lblX=tk.Label(addWin,text="X Value")
+    txtX=tk.Text(addWin, height=1)
+    lblY=tk.Label(addWin,text="Y Value")
+    txtY=tk.Text(addWin, height=1)
+    addButton = tk.Button(addWin, text="Add", command=lambda : actualAddToDB(
+          (txtX.get(1.0,tk.END),txtY.get(1.0,tk.END)),addWin)
+          )
+    cancelButton=tk.Button(addWin, text="Cancel", command=lambda :addWin.destroy() )   
+    lblX.grid(row=0,column=0)
+    txtX.grid(row=0,column=1)
+    lblY.grid(row=1,column=0)
+    txtY.grid(row=1,column=1)
+    addButton.grid(row=2,column=0)
+    cancelButton.grid(row=2,column=1)
+    addWin.transient(root)
+    addWin.wait_visibility()
+    addWin.grab_set()
+    addWin.wait_window()
+
+
+def delete_clicked():
+    global outputArea
+    global txtId
+    """This function is called when the button is pressed."""
+    #print("Button was clicked!")
+    outputArea.delete(1.0,tk.END)
+    outputArea.insert(tk.END,"Button was Clicked\n"+txtId.get(1.0,tk.END))
+
+def update_clicked():
+    global outputArea
+    global selected
+    #print("Data would be here")
+    outputArea.delete(1.0,tk.END)
+    outputArea.insert(tk.END,"Data would be here\n"+selected.get())
+
+def outputLocations():
+    global outputArea
+    locations=getLocations()
+    print(locations)
+    outputArea.delete(1.0,tk.End)
+    outputArea.insert(tk.END,"ID\t X\t Y")
+    for location in locations:
+        id=location[0]
+        x=location[1]
+        y=location[2]
+        outputArea.insert(tk.END,f"{id}\t{x}\t{y}\n")
+
+
+
+# Create the main window
+root = tk.Tk()
+root.title("Location Data Tool")
+root.geometry("600x300") # Set window size
+root.grid_columnconfigure(0, weight=1, uniform='col')
+root.grid_columnconfigure(1, weight=1, uniform='col')
+root.grid_columnconfigure(2, weight=1, uniform='col')
+root.grid_columnconfigure(3, weight=1, uniform='col')
+
+# Create a button widget
+# The 'command' argument links the button to the 'button_clicked' function
+addButton = tk.Button(root, text="Add", command=add_clicked)
+deleteButton=tk.Button(root, text="Delete", command=delete_clicked )
+updateButton=tk.Button(root, text="Update", command=update_clicked )
+saveButton=tk.Button(root, text="Save Changes", command=commitChanges )
+outputArea = tk.Text(root, height=10, width=40)
+
+addButton.grid(row=5,column=0)
+updateButton.grid(row=5,column=1)
+deleteButton.grid(row=5,column=2)
+saveButton.grid(row=5,column=3)
+outputArea.grid(row=0,column=0,columnspan=4,rowspan=5,sticky="ew")
+outputLocations()
+
+root.mainloop()
